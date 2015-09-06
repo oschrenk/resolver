@@ -42,6 +42,8 @@ module Resolver
 
     def request url
       connection = Net::HTTP.new url.host, url.port
+      connection.use_ssl = url.scheme == 'https'
+
       head = Net::HTTP::Head.new url.request_uri
 
       connection.start do |http|
