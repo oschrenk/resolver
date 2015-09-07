@@ -3,6 +3,7 @@ module Resolver
   class Cli
     def main
       ARGV.each do |i|
+        puts "org: #{i}"
         if i =~ /\A#{URI::regexp(['http', 'https'])}\z/
           puts Url.new.resolve(i)
         else
@@ -27,9 +28,7 @@ module Resolver
 
       case response.code.to_i
       when 400...600
-        raise HttpError.new(
-          "server returned #{response.code} #{response.message}",
-          url, response)
+        raise "server returned #{response.code} #{response.message} for #{url}"
       when 301
         new_location = normalize_url response['location']
         resolve_url(new_location)
