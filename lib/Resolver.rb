@@ -2,10 +2,12 @@ module Resolver
 
   class Cli
     def main
-      if ARGV[0] =~ /\A#{URI::regexp(['http', 'https'])}\z/
-        puts Url.new.resolve(ARGV[0])
-      else
-        puts "'#{ARGV[0]}' is not a valid url"
+      ARGV.each do |i|
+        if i =~ /\A#{URI::regexp(['http', 'https'])}\z/
+          puts Url.new.resolve(i)
+        else
+          puts "'#{i}' is not a valid url"
+        end
       end
     end
   end # of class
