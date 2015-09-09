@@ -35,35 +35,34 @@ module Resolver
     end
 
     def resolve url
-      resolve_url (normalize_url url)
+      resolve_url url
     end
 
     private
 
-    def resolve_url url
-      response = request url
+    def resolve_url abs_url
+      response = request abs_url
 
       case response.code.to_i
       when 400...600
-        msg = "#{response.code} #{response.message} for #{url}"
+        msg = "#{response.code} #{response.message} for #{abs_url}"
         if @failfast
           raise IOError, msg
         else
           Either.left msg
         end
       when 301
-        new_location = normalize_url response['location']
+        new_location =  URI.join(abs_url, response['location'])
+
         resolve_url(new_location)
       else
-        Either.right url
+        Either.right abs_url
       end
     end
 
-    def normalize_url url
-      url.respond_to?(:host) ? url : URI(url.to_s)
-    end
+    def request abs_url
+      url = abs_url.respond_to?(:host) ? abs_url : URI(abs_url.to_s)
 
-    def request url
       connection = Net::HTTP.new url.host, url.port
       connection.use_ssl = url.scheme == 'https'
 
