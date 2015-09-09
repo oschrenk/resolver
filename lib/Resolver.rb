@@ -63,16 +63,15 @@ module Resolver
     def request abs_url
       url = abs_url.respond_to?(:host) ? abs_url : URI(abs_url.to_s)
 
-      connection = Net::HTTP.new url.host, url.port
-      connection.use_ssl = url.scheme == 'https'
-
-      head = Net::HTTP::Head.new url.request_uri
-
-      connection.start do |http|
-        http.request head
-      end
+      connection = Net::HTTP.start(
+        url.host,
+        url.port,
+        :read_timeout => 5,
+        :open_timeout => 5,
+        :use_ssl => url.scheme == 'https') do |http|
+          http.request Net::HTTP::Head.new url.request_uri
+        end
     end
-
   end
 
   class Either

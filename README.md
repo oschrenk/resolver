@@ -24,6 +24,8 @@ bin/resolve http://t.co/qjcIICdk67
 
 ## Problem cases
 
+### 403 via HEAD, 200 via GET
+
 ```
 curl -I https://www.funcaptcha.com/2015/09/02/introducing-funcabbcha/`
 ```
@@ -36,4 +38,12 @@ Even faking user agent doesn't work
 
 ```
 curl -A "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5" -I "https://www.funcaptcha.com/2015/09/02/introducing-funcabbcha/"
+```
+
+### Long timeout
+
+Some urls are just not reachable anymore
+
+```
+https://popforms.com/less-stressed/
 ```
