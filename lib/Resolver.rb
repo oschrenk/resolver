@@ -56,7 +56,7 @@ module Resolver
 
         resolve_url(new_location)
       else
-        Either.right abs_url
+        Either.right URI.unescape(abs_url.to_s)
       end
     end
 
