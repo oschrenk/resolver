@@ -41,22 +41,30 @@ module Resolver
     private
 
     def resolve_url abs_url
-      response = request abs_url
+      begin
+        response = request abs_url
 
-      case response.code.to_i
-      when 400...600
-        msg = "#{response.code} #{response.message} for #{abs_url}"
-        if @failfast
-          raise IOError, msg
+        case response.code.to_i
+        when 400...600
+          msg = "#{response.code} #{response.message} for #{abs_url}"
+          if @failfast
+            raise IOError, msg
+          else
+            Either.left msg
+          end
+        when 301
+          new_location =  URI.join(abs_url, response['location'])
+
+          resolve_url(new_location)
         else
-          Either.left msg
+          Either.right URI.unescape(abs_url.to_s)
         end
-      when 301
-        new_location =  URI.join(abs_url, response['location'])
-
-        resolve_url(new_location)
-      else
-        Either.right URI.unescape(abs_url.to_s)
+      rescue Exception => e
+        if @failfast
+          raise e
+        else
+          return Either.left "Exception: #{e.message}\n for #{abs_url}"
+        end
       end
     end
 
